@@ -1,4 +1,4 @@
-package de.legoshi.graphsimulator.random;
+package de.legoshi.graphsimulator.plot;
 
 import java.util.Random;
 

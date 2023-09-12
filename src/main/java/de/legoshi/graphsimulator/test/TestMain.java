@@ -1,7 +1,7 @@
-package de.legoshi.graphsimulator;
+package de.legoshi.graphsimulator.test;
 
 import de.legoshi.graphsimulator.plot.ScatterPlotBuilder;
-import de.legoshi.graphsimulator.random.Distribution;
+import de.legoshi.graphsimulator.plot.Distribution;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.jfree.chart3d.data.xyz.XYZSeries;
@@ -20,6 +20,8 @@ public class TestMain {
 
         @Override
         public void start(Stage stage) {
+            // TEST: Here
+
             printDistribution();
             // showExamplePlot();
         }

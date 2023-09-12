@@ -1,12 +1,10 @@
 package de.legoshi.graphsimulator;
 
-import de.legoshi.graphsimulator.random.Distribution;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 public class Application extends javafx.application.Application {
 

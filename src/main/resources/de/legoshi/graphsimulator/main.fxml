@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="de.legoshi.graphsimulator.Controller">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
-
-    <Button text="Show ScatterPlot!" onAction="#onHelloButtonClick"/>
+<VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.legoshi.graphsimulator.Controller">
+    <MenuBar VBox.vgrow="ALWAYS">
+        <Menu mnemonicParsing="false" text="File">
+            <MenuItem mnemonicParsing="false" onAction="#clickSave" text="Save" />
+            <MenuItem mnemonicParsing="false" onAction="#clickOpen" text="Open" />
+        </Menu>
+        <Menu mnemonicParsing="false" text="Symbols">
+            <MenuItem mnemonicParsing="false" onAction="#addNetworkSymbol" text="Add Network" />
+            <MenuItem mnemonicParsing="false" onAction="#addConnectionSymbol" text="Add Connection" />
+        </Menu>
+        <Menu mnemonicParsing="false" text="Simulator">
+            <MenuItem mnemonicParsing="false" onAction="#openSimulatorWindow" text="Start Simulator" />
+        </Menu>
+    </MenuBar>
+   <AnchorPane fx:id="drawPane" prefHeight="200.0" prefWidth="200.0" />
 </VBox>
