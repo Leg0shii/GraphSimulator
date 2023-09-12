@@ -1,14 +1,12 @@
 package de.legoshi.graphsimulator;
 
-import de.legoshi.graphsimulator.plot.ScatterPlotBuilder;
+import de.legoshi.graphsimulator.random.Distribution;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.jfree.chart3d.data.xyz.XYZSeries;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class Application extends javafx.application.Application {
 

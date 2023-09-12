@@ -1,5 +1,6 @@
 package de.legoshi.graphsimulator.plot;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -51,13 +52,15 @@ public class ScatterPlotBuilder {
     }
 
     public void openWindow() {
-        Stage stage = new Stage();
-        StackPane sp = new StackPane();
-        sp.getChildren().add(createDemoNode());
-        Scene scene = new Scene(sp, 768, 512);
-        stage.setScene(scene);
-        stage.setTitle(title);
-        stage.show();
+        Platform.runLater(() -> {
+            Stage stage = new Stage();
+            StackPane sp = new StackPane();
+            sp.getChildren().add(createDemoNode());
+            Scene scene = new Scene(sp, 768, 512);
+            stage.setScene(scene);
+            stage.setTitle(title);
+            stage.show();
+        });
     }
 
     private Node createDemoNode() {
