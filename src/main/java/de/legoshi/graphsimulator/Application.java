@@ -11,7 +11,7 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("main.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(fxmlLoader.load(), 1400, 1000, true);
         scene.getStylesheets().add(Application.class.getResource(("stylesheet.css")).toExternalForm());
         stage.setTitle("GraphSimulator");
         stage.setScene(scene);
