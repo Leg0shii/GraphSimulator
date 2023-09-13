@@ -1,15 +1,20 @@
 package de.legoshi.graphsimulator.gui;
 
-import javafx.scene.layout.AnchorPane;
+import de.legoshi.graphsimulator.file.FileOpener;
+import de.legoshi.graphsimulator.file.FileSaver;
+import de.legoshi.graphsimulator.gui.draw.DrawHandler;
+
+import java.io.File;
 
 public class MenuHandler {
 
-    public void onSaveClick(AnchorPane drawPane) {
-
+    public void onSaveClick(DrawHandler drawHandler, File file) {
+        new FileSaver(drawHandler, file).saveFile();
     }
 
-    public void onOpenClick(AnchorPane drawPane) {
-        onSaveClick(drawPane);
+    public void onOpenClick(DrawHandler drawHandler, File file) {
+        drawHandler.getDrawPane().getChildren().clear();
+        new FileOpener(file.getPath(), drawHandler).openFile();
     }
 
 }

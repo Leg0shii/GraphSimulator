@@ -2,15 +2,20 @@ package de.legoshi.graphsimulator;
 
 import de.legoshi.graphsimulator.gui.MenuHandler;
 import de.legoshi.graphsimulator.gui.draw.DrawHandler;
+import de.legoshi.graphsimulator.gui.draw.edit.ConnectionCreateWindow;
 import de.legoshi.graphsimulator.gui.draw.symbol.ConnectionSymbol;
 import de.legoshi.graphsimulator.gui.draw.symbol.NetworkSymbol;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+
+import java.io.File;
 
 public class Controller {
 
     public AnchorPane drawPane;
+    
     private DrawHandler drawHandler;
     private MenuHandler menuHandler;
 
@@ -20,23 +25,41 @@ public class Controller {
         menuHandler = new MenuHandler();
     }
 
-    public void clickSave(ActionEvent actionEvent) {
-        menuHandler.onSaveClick(drawPane);
+    public void clickSave() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save File");
+        
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+    
+        File file = fileChooser.showSaveDialog(drawPane.getScene().getWindow());
+        if (file != null) {
+            menuHandler.onSaveClick(drawHandler, file);
+        }
     }
 
-    public void clickOpen(ActionEvent actionEvent) {
-        menuHandler.onOpenClick(drawPane);
+    public void clickOpen() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open File");
+    
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+    
+        File file = fileChooser.showOpenDialog(drawPane.getScene().getWindow());
+        if (file != null) {
+            menuHandler.onOpenClick(drawHandler, file);
+        }
     }
 
     public void addNetworkSymbol() {
-        drawHandler.addSymbol(new NetworkSymbol("Symbol 1").createNode());
+        drawHandler.addSymbol(new NetworkSymbol(drawHandler).createNode());
     }
 
-    public void addConnectionSymbol(ActionEvent actionEvent) {
-
+    public void addConnectionSymbol() {
+        new ConnectionCreateWindow(drawHandler).show();
     }
 
-    public void openSimulatorWindow(ActionEvent actionEvent) {
+    public void openSimulatorWindow() {
 
     }
 

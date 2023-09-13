@@ -21,8 +21,8 @@ public class Distribution {
         this.standardDerivation = standardDerivation;
     }
 
-    public double getRandomValue() {
-        return middleValue + random.nextGaussian() * standardDerivation;
+    public int getRandomValue() {
+        return (int) Math.round(middleValue + random.nextGaussian() * standardDerivation);
     }
 
 }
