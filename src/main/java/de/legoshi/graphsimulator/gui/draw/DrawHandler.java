@@ -63,5 +63,15 @@ public class DrawHandler {
         }
         return symbols;
     }
+    
+    public List<NetworkSymbol> getAllImportantNetworkSymbols() {
+        List<NetworkSymbol> symbols = new ArrayList<>();
+        for (Node node : drawPane.getChildren()) {
+            if (node instanceof NetworkSymbol && ((NetworkSymbol) node).isImportant()) {
+                symbols.add((NetworkSymbol) node);
+            }
+        }
+        return symbols;
+    }
 
 }

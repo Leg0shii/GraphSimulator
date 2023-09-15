@@ -1,5 +1,6 @@
 package de.legoshi.graphsimulator.gui.draw.edit;
 
+import de.legoshi.graphsimulator.gui.DialogWindow;
 import de.legoshi.graphsimulator.gui.draw.symbol.NetworkSymbol;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;

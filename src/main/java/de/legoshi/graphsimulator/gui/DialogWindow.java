@@ -1,4 +1,4 @@
-package de.legoshi.graphsimulator.gui.draw.edit;
+package de.legoshi.graphsimulator.gui;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

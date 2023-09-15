@@ -1,6 +1,8 @@
 package de.legoshi.graphsimulator;
 
 import de.legoshi.graphsimulator.gui.MenuHandler;
+import de.legoshi.graphsimulator.gui.MultipleSimulatorWindow;
+import de.legoshi.graphsimulator.gui.SimulationWindow;
 import de.legoshi.graphsimulator.gui.draw.DrawHandler;
 import de.legoshi.graphsimulator.gui.draw.edit.ConnectionCreateWindow;
 import de.legoshi.graphsimulator.gui.draw.symbol.ConnectionSymbol;
@@ -60,7 +62,10 @@ public class Controller {
     }
 
     public void openSimulatorWindow() {
-
+        new SimulationWindow(drawHandler).show();
     }
-
+    
+    public void openMultipleSimulatorWindow() {
+        new MultipleSimulatorWindow(drawHandler).show();
+    }
 }

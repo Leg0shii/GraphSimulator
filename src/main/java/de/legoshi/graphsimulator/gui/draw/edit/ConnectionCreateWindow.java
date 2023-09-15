@@ -1,5 +1,6 @@
 package de.legoshi.graphsimulator.gui.draw.edit;
 
+import de.legoshi.graphsimulator.gui.DialogWindow;
 import de.legoshi.graphsimulator.gui.draw.DrawHandler;
 import de.legoshi.graphsimulator.gui.draw.symbol.ConnectionSymbol;
 import de.legoshi.graphsimulator.gui.draw.symbol.NetworkSymbol;

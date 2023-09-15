@@ -2,6 +2,7 @@ package de.legoshi.graphsimulator.test;
 
 import de.legoshi.graphsimulator.plot.ScatterPlotBuilder;
 import de.legoshi.graphsimulator.plot.Distribution;
+import de.legoshi.graphsimulator.simulation.TimeParser;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.jfree.chart3d.data.xyz.XYZSeries;
@@ -22,7 +23,7 @@ public class TestMain {
         public void start(Stage stage) {
             // TEST: Here
 
-            printDistribution();
+            // printDistribution();
             // showExamplePlot();
         }
     }

@@ -1,13 +1,15 @@
 package de.legoshi.graphsimulator.plot;
 
+import lombok.Getter;
+
 import java.util.Random;
 
 public class Distribution {
 
     private final Random random;
 
-    private final double middleValue;
-    private final double standardDerivation;
+    @Getter private final double middleValue;
+    @Getter private final double standardDerivation;
 
     public Distribution(long seed, double middleValue, double standardDerivation) {
         this.random = new Random(seed);

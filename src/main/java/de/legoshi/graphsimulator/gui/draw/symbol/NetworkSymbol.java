@@ -7,6 +7,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class NetworkSymbol extends Symbol {
     @Getter private String name;
     @Getter private final List<ConnectionSymbol> connectionSymbols = new ArrayList<>();
     @Getter private boolean important = false;
+    @Getter @Setter private long destroyedTime = 0;
     
     public double lastX;
     public double lastY;

@@ -17,10 +17,11 @@ public class ConnectionSymbol extends Symbol {
     private final DrawHandler drawHandler;
     private Line line;
     
-    private final NetworkSymbol startSymbol;
-    private final NetworkSymbol endSymbol;
+    @Getter private final NetworkSymbol startSymbol;
+    @Getter private final NetworkSymbol endSymbol;
     
     private Label redundancyLabel;
+    private final int initialRedundancy;
     @Getter
     private int redundancy;
     
@@ -28,6 +29,7 @@ public class ConnectionSymbol extends Symbol {
         this.drawHandler = drawHandler;
         this.startSymbol = startSymbol;
         this.endSymbol = endSymbol;
+        this.initialRedundancy = redundancy;
         this.redundancy = redundancy;
         
         startSymbol.getConnectionSymbols().add(this);
@@ -78,6 +80,10 @@ public class ConnectionSymbol extends Symbol {
     
     }
     
+    public NetworkSymbol getOtherEnd(NetworkSymbol network) {
+        return (network == startSymbol) ? endSymbol : startSymbol;
+    }
+    
     public static ConnectionSymbol toSymbol(DrawHandler drawHandler, String value) {
         String[] split = value.split(";");
         NetworkSymbol start = drawHandler.getNetworkSymbolByID(UUID.fromString(split[1]));
@@ -86,7 +92,7 @@ public class ConnectionSymbol extends Symbol {
         return new ConnectionSymbol(start, end, redundancy, drawHandler);
     }
     
-    private void setRedundancy(int redundancy) {
+    public void setRedundancy(int redundancy) {
         this.redundancy = redundancy;
         this.redundancyLabel.setText("[" + redundancy + "]");
     }
@@ -125,4 +131,13 @@ public class ConnectionSymbol extends Symbol {
         translateYProperty().unbind();
     }
     
+    public void decrementRedundancy() {
+        if (redundancy >= 0) {
+            redundancy = redundancy - 1;
+        }
+    }
+    
+    public void resetRedundancy() {
+        redundancy = initialRedundancy;
+    }
 }

@@ -14,7 +14,8 @@
             <MenuItem mnemonicParsing="false" onAction="#addConnectionSymbol" text="Add Connection" />
         </Menu>
         <Menu mnemonicParsing="false" text="Simulator">
-            <MenuItem mnemonicParsing="false" onAction="#openSimulatorWindow" text="Start Simulator" />
+            <MenuItem mnemonicParsing="false" onAction="#openSimulatorWindow" text="Open Single Simulator" />
+            <MenuItem mnemonicParsing="false" onAction="#openMultipleSimulatorWindow" text="Open Multiple Simulator" />
         </Menu>
     </MenuBar>
    <AnchorPane fx:id="drawPane" prefHeight="200.0" prefWidth="200.0" />
