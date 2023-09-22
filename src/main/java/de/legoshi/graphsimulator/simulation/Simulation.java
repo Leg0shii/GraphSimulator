@@ -47,9 +47,12 @@ public class Simulation {
     
     private void applyDistributionToConnection() {
         long timePassed = 0;
+        long lastAttack = 0;
         while (timePassed < runTime) {
             int randomAttackCount = 1; // rangeStart + ((int) (Math.random() * rangeEnd));
-            long attackStart = offlineDistribution.getRandomValue();
+            long attackStart = lastAttack + offlineDistribution.getRandomValue();
+            lastAttack = attackStart;
+            
             long repairTime = attackStart + onlineDistribution.getRandomValue();
             timePassed = timePassed + repairTime;
             
