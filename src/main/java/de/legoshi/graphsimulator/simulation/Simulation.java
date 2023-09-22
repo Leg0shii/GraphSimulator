@@ -47,11 +47,14 @@ public class Simulation {
     
     private void applyDistributionToConnection() {
         long timePassed = 0;
+        long lastAttack = 0;
         while (timePassed < runTime) {
             int randomAttackCount = 1; // rangeStart + ((int) (Math.random() * rangeEnd));
-            long timeToNextFailure = failureDistribution.getRandomValue();
-            long timeToRepair = repairTimeDistribution.getRandomValue();
-            timePassed += timeToNextFailure + timeToRepair;
+            long timeToNextFailure = lastAttack + failureDistribution.getRandomValue();
+            lastAttack = timeToNextFailure;
+            
+            long timeToRepair = timeToNextFailure + repairTimeDistribution.getRandomValue();
+            timePassed = timePassed + timeToRepair;
             
             for (ConnectionSymbol connectionSymbol : connections.keySet()) {
                 connectionSymbol.resetRedundancy();
