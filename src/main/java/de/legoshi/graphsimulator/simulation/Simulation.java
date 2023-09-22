@@ -49,7 +49,7 @@ public class Simulation {
         long timePassed = 0;
         long lastAttack = 0;
         while (timePassed < runTime) {
-            int randomAttackCount = 2; // rangeStart + ((int) (Math.random() * rangeEnd));
+            int randomAttackCount = 1; // rangeStart + ((int) (Math.random() * rangeEnd));
             long timeToNextFailure = lastAttack + failureDistribution.getRandomValue();
             lastAttack = timeToNextFailure;
             
