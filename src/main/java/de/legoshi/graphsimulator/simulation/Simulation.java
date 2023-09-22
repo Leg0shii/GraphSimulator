@@ -49,7 +49,7 @@ public class Simulation {
         long timePassed = 0;
         long lastAttack = 0;
         while (timePassed < runTime) {
-            int randomAttackCount = 1; // rangeStart + ((int) (Math.random() * rangeEnd));
+            int randomAttackCount = 2; // rangeStart + ((int) (Math.random() * rangeEnd));
             long timeToNextFailure = lastAttack + failureDistribution.getRandomValue();
             lastAttack = timeToNextFailure;
             
@@ -100,7 +100,6 @@ public class Simulation {
         String result = "";
         List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
         for (NetworkSymbol network : allNodes) {
-            if (network.isImportant()) continue;
             result = result + "" +network.getName() + ";" + failureDistribution.getMean() + ";"
                 + failureDistribution.getStandardDeviation() + ";" + repairTimeDistribution.getMean() + ";"
                 + repairTimeDistribution.getStandardDeviation() + ";"
@@ -110,17 +109,17 @@ public class Simulation {
     }
     
     private Set<NetworkSymbol> getAllConnectedNodes() {
-        List<NetworkSymbol> symbols = drawHandler.getAllImportantNetworkSymbols();
-        Set<NetworkSymbol> connectedNetworks = new HashSet<>();
-        for (NetworkSymbol importantSymbol : symbols) {
-            connectedNetworks.addAll(findAllConnectedNetworks(importantSymbol));
-        }
-        return connectedNetworks;
+        NetworkSymbol symbol = getCurrentlyActiveNetwork();
+        return new HashSet<>(findAllConnectedNetworks(symbol));
     }
     
     public static Set<NetworkSymbol> findAllConnectedNetworks(NetworkSymbol startingNetwork) {
         Set<NetworkSymbol> visitedNetworks = new HashSet<>();
         Stack<NetworkSymbol> stack = new Stack<>();
+        
+        if (startingNetwork == null) {
+            return visitedNetworks;
+        }
         
         stack.push(startingNetwork);
         
@@ -140,7 +139,6 @@ public class Simulation {
             }
         }
         
-        visitedNetworks.remove(startingNetwork);
         return visitedNetworks;
     }
     
@@ -148,12 +146,16 @@ public class Simulation {
         drawHandler.getConnectionSymbols().forEach(cs -> connections.put(cs, new ConnectionStat(cs)));
     }
     
-    public String secondsToTime(int totalSeconds) {
-        int hours = totalSeconds / 3600;
-        int minutes = (totalSeconds % 3600) / 60;
-        int seconds = totalSeconds % 60;
-        
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    private NetworkSymbol getCurrentlyActiveNetwork() {
+        List<NetworkSymbol> symbols = drawHandler.getAllImportantNetworkSymbols();
+        symbols.sort(Comparator.comparingInt(NetworkSymbol::getPriority));
+        for (int i = 0; i < symbols.size()-1; i++) {
+            Set<NetworkSymbol> connectedNetworks = findAllConnectedNetworks(symbols.get(i));
+            if (connectedNetworks.contains(symbols.get(i+1))) {
+                return symbols.get(i);
+            }
+        }
+        return symbols.get(symbols.size()-1);
     }
     
 }
