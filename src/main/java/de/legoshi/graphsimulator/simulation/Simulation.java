@@ -12,8 +12,8 @@ public class Simulation {
     private final DrawHandler drawHandler;
     
     private final HashMap<ConnectionSymbol, ConnectionStat> connections;
-    private final Distribution offlineDistribution;
-    private final Distribution onlineDistribution;
+    private final Distribution failureDistribution;
+    private final Distribution repairTimeDistribution;
     
     private final long runTime;
     private final int rangeStart;
@@ -22,8 +22,8 @@ public class Simulation {
     public Simulation(DrawHandler drawHandler, Distribution offlineDistribution, Distribution onlineDistribution,
                       long runTime, int rangeStart, int rangeEnd) {
         this.drawHandler = drawHandler;
-        this.offlineDistribution = offlineDistribution;
-        this.onlineDistribution = onlineDistribution;
+        this.failureDistribution = offlineDistribution;
+        this.repairTimeDistribution = onlineDistribution;
         this.runTime = runTime;
         this.rangeStart = rangeStart;
         this.rangeEnd = rangeEnd;
@@ -49,21 +49,21 @@ public class Simulation {
         long timePassed = 0;
         while (timePassed < runTime) {
             int randomAttackCount = 1; // rangeStart + ((int) (Math.random() * rangeEnd));
-            long attackStart = offlineDistribution.getRandomValue();
-            long repairTime = attackStart + onlineDistribution.getRandomValue();
-            timePassed = timePassed + repairTime;
+            long timeToNextFailure = failureDistribution.getRandomValue();
+            long timeToRepair = repairTimeDistribution.getRandomValue();
+            timePassed += timeToNextFailure + timeToRepair;
             
             for (ConnectionSymbol connectionSymbol : connections.keySet()) {
                 connectionSymbol.resetRedundancy();
             }
-            
-            int listSize = drawHandler.getConnectionSymbols().size()-1;
+
+            int listSize = drawHandler.getConnectionSymbols().size() - 1;
             for (int i = 0; i < randomAttackCount; i++) {
                 ConnectionSymbol connectionSymbol = drawHandler.getConnectionSymbols().get((int) (Math.random() * listSize));
                 ConnectionStat stat = connections.get(connectionSymbol);
                 
                 if (stat != null) {
-                    int currentlyNotDestroyed = stat.getNotDestroyedID(attackStart, repairTime);
+                    int currentlyNotDestroyed = stat.getNotDestroyedID(timeToNextFailure, timeToRepair);
                     if (currentlyNotDestroyed == -1) {
                         continue;
                     }
@@ -74,20 +74,20 @@ public class Simulation {
                     connections.put(connectionSymbol, stat);
                 }
     
-                int currentlyNotDestroyed = stat.getNotDestroyedID(attackStart, repairTime);
-                stat.addOfflineTime(attackStart, repairTime, currentlyNotDestroyed);
+                int currentlyNotDestroyed = stat.getNotDestroyedID(timeToNextFailure, timeToRepair);
+                stat.addOfflineTime(timeToNextFailure, timeToRepair, currentlyNotDestroyed);
             }
             
             for (ConnectionSymbol connectionSymbol : connections.keySet()) {
                 ConnectionStat stat = connections.get(connectionSymbol);
-                connectionSymbol.setRedundancy(connectionSymbol.getRedundancy()-stat.getDestroyedCount(attackStart, repairTime));
+                connectionSymbol.setRedundancy(connectionSymbol.getRedundancy()-stat.getDestroyedCount(timeToNextFailure, timeToRepair));
             }
             
             Set<NetworkSymbol> connectedNetworks = getAllConnectedNodes();
             List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
             for (NetworkSymbol network : allNodes) {
                 if (!connectedNetworks.contains(network)) {
-                    network.setDestroyedTime(network.getDestroyedTime() + (repairTime - attackStart));
+                    network.setDestroyedTime(network.getDestroyedTime() + (timeToRepair - timeToNextFailure));
                 }
             }
         }
@@ -98,9 +98,9 @@ public class Simulation {
         List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
         for (NetworkSymbol network : allNodes) {
             if (network.isImportant()) continue;
-            result = result + "" +network.getName() + ";" + offlineDistribution.getMiddleValue() + ";"
-                + offlineDistribution.getStandardDerivation() + ";" + onlineDistribution.getMiddleValue() + ";"
-                + onlineDistribution.getStandardDerivation() + ";"
+            result = result + "" +network.getName() + ";" + failureDistribution.getMean() + ";"
+                + failureDistribution.getStandardDeviation() + ";" + repairTimeDistribution.getMean() + ";"
+                + repairTimeDistribution.getStandardDeviation() + ";"
                 + (100.0-((double)network.getDestroyedTime()/(double)runTime)*100.0) + "%" + "\n";
         }
         return result;

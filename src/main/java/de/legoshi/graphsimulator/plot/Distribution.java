@@ -8,23 +8,23 @@ public class Distribution {
 
     private final Random random;
 
-    @Getter private final double middleValue;
-    @Getter private final double standardDerivation;
+    @Getter private final double mean;
+    @Getter private final double standardDeviation;
 
-    public Distribution(long seed, double middleValue, double standardDerivation) {
+    public Distribution(long seed, double mean, double standardDeviation) {
         this.random = new Random(seed);
-        this.middleValue = middleValue;
-        this.standardDerivation = standardDerivation;
+        this.mean = mean;
+        this.standardDeviation = standardDeviation;
     }
 
-    public Distribution(double middleValue, double standardDerivation) {
+    public Distribution(double mean, double standardDeviation) {
         this.random = new Random();
-        this.middleValue = middleValue;
-        this.standardDerivation = standardDerivation;
+        this.mean = mean;
+        this.standardDeviation = standardDeviation;
     }
 
     public int getRandomValue() {
-        return (int) Math.round(middleValue + random.nextGaussian() * standardDerivation);
+        return (int) Math.round(mean + random.nextGaussian() * standardDeviation);
     }
 
 }
