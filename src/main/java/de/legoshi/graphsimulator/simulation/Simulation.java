@@ -130,10 +130,10 @@ public class Simulation {
         String result = "";
         List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
         for (NetworkSymbol network : allNodes) {
-            result = result + "" +network.getName() + ";" + failureDistribution.getMean() + ";"
-                + failureDistribution.getStandardDeviation() + ";" + repairTimeDistribution.getMean() + ";"
-                + repairTimeDistribution.getStandardDeviation() + ";"
-                + (100.0-((double)network.getDestroyedTime()/(double)runTime)*100.0) + "%" + "\n";
+            result = result + "" + network.getName() + ";" + ((int) (failureDistribution.getMean()*1000))/1000.0 + ";"
+                + ((int) (failureDistribution.getStandardDeviation()*1000))/1000.0 + ";" + ((int) (repairTimeDistribution.getMean()*1000))/1000.0 + ";"
+                + ((int) (repairTimeDistribution.getStandardDeviation()*1000))/1000.0 + ";"
+                + ((int) ((100.0-((double)network.getDestroyedTime()/(double)runTime)*100.0)*1000))/1000.0 + "%" + "\n";
         }
         return result;
     }
