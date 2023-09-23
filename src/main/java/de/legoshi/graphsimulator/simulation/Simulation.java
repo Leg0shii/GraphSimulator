@@ -34,6 +34,8 @@ public class Simulation {
     private void run() {
         resetNodes();
         applyDistributionToConnection();
+        flattenDuration();
+        calculateDestroyTime();
     }
     
     // name;meandes;stddes;meanrep;stdrep;available
@@ -52,6 +54,7 @@ public class Simulation {
         List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
         for (NetworkSymbol network : allNodes) {
             network.setDestroyedTime(0);
+            network.setDestroyedTimes(new ArrayList<>());
         }
     }
     
@@ -100,9 +103,25 @@ public class Simulation {
             List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
             for (NetworkSymbol network : allNodes) {
                 if (!connectedNetworks.contains(network)) {
-                    network.setDestroyedTime(network.getDestroyedTime() + (timeToRepair - timeToNextFailure));
                     network.getDestroyedTimes().add(new ConnectionStat.Duration(timeToNextFailure, timeToRepair));
                 }
+            }
+        }
+    }
+    
+    private void flattenDuration() {
+        List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
+        for (NetworkSymbol network : allNodes) {
+            List<ConnectionStat.Duration> resDurations = ConnectionStat.Duration.getOverlappingDurations(network.getDestroyedTimes());
+            network.setDestroyedTimes(resDurations);
+        }
+    }
+    
+    private void calculateDestroyTime() {
+        List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
+        for (NetworkSymbol network : allNodes) {
+            for (ConnectionStat.Duration duration : network.getDestroyedTimes()) {
+                network.setDestroyedTime(network.getDestroyedTime() + duration.end - duration.start);
             }
         }
     }
@@ -123,8 +142,7 @@ public class Simulation {
         String result = "";
         List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
         for (NetworkSymbol network : allNodes) {
-            List<ConnectionStat.Duration> resDurations = ConnectionStat.Duration.getOverlappingDurations(network.getDestroyedTimes());
-            for (ConnectionStat.Duration duration : resDurations) {
+            for (ConnectionStat.Duration duration : network.getDestroyedTimes()) {
                 result = result + "" +network.getName() + ";" + duration.start + ";" + duration.end + "\n";
             }
         }
