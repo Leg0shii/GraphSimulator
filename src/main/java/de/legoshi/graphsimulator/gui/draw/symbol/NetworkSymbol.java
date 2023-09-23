@@ -2,6 +2,7 @@ package de.legoshi.graphsimulator.gui.draw.symbol;
 
 import de.legoshi.graphsimulator.gui.draw.DrawHandler;
 import de.legoshi.graphsimulator.gui.draw.edit.NetworkEditWindow;
+import de.legoshi.graphsimulator.simulation.ConnectionStat;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -27,6 +28,7 @@ public class NetworkSymbol extends Symbol {
     @Getter private boolean important = false;
     @Getter @Setter private int priority = 99;
     @Getter @Setter private long destroyedTime = 0;
+    @Getter @Setter private List<ConnectionStat.Duration> destroyedTimes = new ArrayList<>();
     
     public double lastX;
     public double lastY;

@@ -31,11 +31,21 @@ public class Simulation {
         loadConnections();
     }
     
-    // name;meandes;stddes;meanrep;stdrep;available
-    public String start() {
+    private void run() {
         resetNodes();
         applyDistributionToConnection();
+    }
+    
+    // name;meandes;stddes;meanrep;stdrep;available
+    public String start() {
+        run();
         return compileResults();
+    }
+    
+    // name;destroyStart;destroyEnd
+    public String startSingle() {
+        run();
+        return compileSingleResult();
     }
     
     private void resetNodes() {
@@ -91,6 +101,7 @@ public class Simulation {
             for (NetworkSymbol network : allNodes) {
                 if (!connectedNetworks.contains(network)) {
                     network.setDestroyedTime(network.getDestroyedTime() + (timeToRepair - timeToNextFailure));
+                    network.getDestroyedTimes().add(new ConnectionStat.Duration(timeToNextFailure, timeToRepair));
                 }
             }
         }
@@ -104,6 +115,18 @@ public class Simulation {
                 + failureDistribution.getStandardDeviation() + ";" + repairTimeDistribution.getMean() + ";"
                 + repairTimeDistribution.getStandardDeviation() + ";"
                 + (100.0-((double)network.getDestroyedTime()/(double)runTime)*100.0) + "%" + "\n";
+        }
+        return result;
+    }
+    
+    private String compileSingleResult() {
+        String result = "";
+        List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
+        for (NetworkSymbol network : allNodes) {
+            List<ConnectionStat.Duration> resDurations = ConnectionStat.Duration.getOverlappingDurations(network.getDestroyedTimes());
+            for (ConnectionStat.Duration duration : resDurations) {
+                result = result + "" +network.getName() + ";" + duration.start + ";" + duration.end + "\n";
+            }
         }
         return result;
     }

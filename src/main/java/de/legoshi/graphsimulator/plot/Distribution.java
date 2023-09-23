@@ -24,7 +24,8 @@ public class Distribution {
     }
 
     public int getRandomValue() {
-        return (int) Math.round(mean + random.nextGaussian() * standardDeviation);
+        int result = (int) Math.round(mean + random.nextGaussian() * standardDeviation);
+        return Math.max(result, 0);
     }
 
 }

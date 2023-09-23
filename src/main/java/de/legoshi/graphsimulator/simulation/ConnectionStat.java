@@ -3,9 +3,7 @@ package de.legoshi.graphsimulator.simulation;
 import de.legoshi.graphsimulator.gui.draw.symbol.ConnectionSymbol;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ConnectionStat {
     
@@ -68,6 +66,31 @@ public class ConnectionStat {
         public Duration(long start, long end) {
             this.start = start;
             this.end = end;
+        }
+    
+        public static List<Duration> getOverlappingDurations(List<Duration> durations) {
+            if (durations == null || durations.isEmpty()) {
+                return new ArrayList<>();
+            }
+        
+            // Sort the durations based on their start time
+            durations.sort(Comparator.comparingLong(a -> a.start));
+        
+            List<Duration> mergedDurations = new ArrayList<>();
+            Duration currentDuration = durations.get(0);
+        
+            for (int i = 1; i < durations.size(); i++) {
+                // If the current duration overlaps with the next one
+                if (currentDuration.end >= durations.get(i).start) {
+                    currentDuration.end = Math.max(currentDuration.end, durations.get(i).end);
+                } else {
+                    mergedDurations.add(currentDuration);
+                    currentDuration = durations.get(i);
+                }
+            }
+        
+            mergedDurations.add(currentDuration);
+            return mergedDurations;
         }
         
     }
