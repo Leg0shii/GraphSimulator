@@ -60,6 +60,7 @@ public class Simulation {
     
     private void applyDistributionToConnection() {
         // long timePassed = 0;
+        System.out.println("-----------------------");
         long timeToNextFailure = 0;
         long lastAttack = 0;
         while (timeToNextFailure < runTime) {
@@ -77,8 +78,7 @@ public class Simulation {
             for (int i = 0; i < randomAttackCount; i++) {
                 ConnectionSymbol connectionSymbol = drawHandler.getConnectionSymbols().get((int) (Math.random() * listSize));
                 ConnectionStat stat = connections.get(connectionSymbol);
-                System.out.println("TIME PASSED: " + timeToNextFailure/(60*60*24) + " / " + runTime/(60*60*24));
-                System.out.println("ATTACKED: " + connectionSymbol.getStartSymbol().getName() + " -> " + connectionSymbol.getEndSymbol().getName());
+                System.out.println("ATTACKED: " + connectionSymbol.getStartSymbol().getName() + " -> " + connectionSymbol.getEndSymbol().getName() + "[" + timeToNextFailure/(60*60*24) + "d-" + timeToRepair/(60*60*24) + "d]");
                 
                 if (stat != null) {
                     int currentlyNotDestroyed = stat.getNotDestroyedID(timeToNextFailure, timeToRepair);
@@ -105,7 +105,7 @@ public class Simulation {
             List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
             for (NetworkSymbol network : allNodes) {
                 if (!connectedNetworks.contains(network)) {
-                    System.out.println("network " + network.getName() + " destroyed: " + timeToNextFailure/(60*60*24) + " " + timeToRepair/(60*60*24));
+                    // System.out.println("network " + network.getName() + " destroyed: " + timeToNextFailure/(60*60*24) + " " + timeToRepair/(60*60*24));
                     network.getDestroyedTimes().add(new ConnectionStat.Duration(timeToNextFailure, timeToRepair));
                 }
             }
@@ -133,10 +133,13 @@ public class Simulation {
         String result = "";
         List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
         for (NetworkSymbol network : allNodes) {
-            result = result + "" + network.getName() + ";" + ((int) (failureDistribution.getMean()*1000))/1000.0 + ";"
-                + ((int) (failureDistribution.getStandardDeviation()*1000))/1000.0 + ";" + ((int) (repairTimeDistribution.getMean()*1000))/1000.0 + ";"
-                + ((int) (repairTimeDistribution.getStandardDeviation()*1000))/1000.0 + ";"
-                + ((int) ((100.0-((double)network.getDestroyedTime()/(double)runTime)*100.0)*1000))/1000.0 + "%" + "\n";
+            result = result + ""
+                + network.getName() + ";"
+                + failureDistribution.getMean() + ";"
+                + failureDistribution.getStandardDeviation() + ";"
+                + repairTimeDistribution.getMean() + ";"
+                + repairTimeDistribution.getStandardDeviation() + ";"
+                + (100.0-((double)network.getDestroyedTime()/(double)runTime)*100.0) + "%" + "\n";
         }
         return result;
     }
