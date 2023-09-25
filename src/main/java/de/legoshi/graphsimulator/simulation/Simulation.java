@@ -59,15 +59,15 @@ public class Simulation {
     }
     
     private void applyDistributionToConnection() {
-        long timePassed = 0;
+        // long timePassed = 0;
+        long timeToNextFailure = 0;
         long lastAttack = 0;
-        while (timePassed < runTime) {
+        while (timeToNextFailure < runTime) {
             int randomAttackCount = 1; // rangeStart + ((int) (Math.random() * rangeEnd));
-            long timeToNextFailure = lastAttack + failureDistribution.getRandomValue();
+            timeToNextFailure = lastAttack + failureDistribution.getRandomValue();
             lastAttack = timeToNextFailure;
             
             long timeToRepair = timeToNextFailure + repairTimeDistribution.getRandomValue();
-            timePassed = timePassed + timeToRepair;
             
             for (ConnectionSymbol connectionSymbol : connections.keySet()) {
                 connectionSymbol.resetRedundancy();
@@ -77,6 +77,8 @@ public class Simulation {
             for (int i = 0; i < randomAttackCount; i++) {
                 ConnectionSymbol connectionSymbol = drawHandler.getConnectionSymbols().get((int) (Math.random() * listSize));
                 ConnectionStat stat = connections.get(connectionSymbol);
+                System.out.println("TIME PASSED: " + timeToNextFailure/(60*60*24) + " / " + runTime/(60*60*24));
+                System.out.println("ATTACKED: " + connectionSymbol.getStartSymbol().getName() + " -> " + connectionSymbol.getEndSymbol().getName());
                 
                 if (stat != null) {
                     int currentlyNotDestroyed = stat.getNotDestroyedID(timeToNextFailure, timeToRepair);
@@ -103,6 +105,7 @@ public class Simulation {
             List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
             for (NetworkSymbol network : allNodes) {
                 if (!connectedNetworks.contains(network)) {
+                    System.out.println("network " + network.getName() + " destroyed: " + timeToNextFailure/(60*60*24) + " " + timeToRepair/(60*60*24));
                     network.getDestroyedTimes().add(new ConnectionStat.Duration(timeToNextFailure, timeToRepair));
                 }
             }
