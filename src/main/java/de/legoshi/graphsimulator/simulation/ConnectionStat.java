@@ -14,9 +14,7 @@ public class ConnectionStat {
     public ConnectionStat(ConnectionSymbol connectionSymbol) {
         this.connectionSymbol = connectionSymbol;
         this.offlineMap = new HashMap<>();
-        for (int i = 0; i < connectionSymbol.getRedundancy(); i++) {
-            offlineMap.put(i, new ArrayList<>());
-        }
+        offlineMap.put(0, new ArrayList<>());
     }
     
     public void addOfflineTime(long startTime, long duration, int connectionID) {
@@ -122,9 +120,9 @@ public class ConnectionStat {
                 }
             }
         
-            if (type != null && type.equals("ende")) {
+            /*if (type != null && type.equals("ende")) {
                 durMap.remove(closestDuration);  // Entferne die Duration aus der TreeMap
-            }
+            }*/
         
             return closestDuration != null ? new Triple<>(closestDuration, type, symbol) : null;
         }
