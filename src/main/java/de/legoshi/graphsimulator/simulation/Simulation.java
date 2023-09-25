@@ -34,6 +34,7 @@ public class Simulation {
     private void run() {
         resetNodes();
         applyDistributionToConnection();
+        applyStatus();
         flattenDuration();
         calculateDestroyTime();
     }
@@ -56,11 +57,12 @@ public class Simulation {
             network.setDestroyedTime(0);
             network.setDestroyedTimes(new ArrayList<>());
         }
+        for (ConnectionSymbol connection : connections.keySet()) {
+            connection.resetRedundancy();
+        }
     }
     
     private void applyDistributionToConnection() {
-        // long timePassed = 0;
-        System.out.println("-----------------------");
         long timeToNextFailure = 0;
         long lastAttack = 0;
         while (timeToNextFailure < runTime) {
@@ -70,15 +72,19 @@ public class Simulation {
             
             long timeToRepair = timeToNextFailure + repairTimeDistribution.getRandomValue();
             
-            for (ConnectionSymbol connectionSymbol : connections.keySet()) {
-                connectionSymbol.resetRedundancy();
+            if (timeToRepair > runTime) {
+                timeToRepair = runTime;
             }
-
+            
+            if (timeToNextFailure > runTime) {
+                timeToNextFailure = runTime;
+            }
+            
             int listSize = drawHandler.getConnectionSymbols().size() - 1;
             for (int i = 0; i < randomAttackCount; i++) {
                 ConnectionSymbol connectionSymbol = drawHandler.getConnectionSymbols().get((int) (Math.random() * listSize));
                 ConnectionStat stat = connections.get(connectionSymbol);
-                System.out.println("ATTACKED: " + connectionSymbol.getStartSymbol().getName() + " -> " + connectionSymbol.getEndSymbol().getName() + "[" + timeToNextFailure/(60*60*24) + "d-" + timeToRepair/(60*60*24) + "d]");
+                System.out.println("ATTACKED: " + connectionSymbol.getStartSymbol().getName() + " -> " + connectionSymbol.getEndSymbol().getName() + "[" + timeToNextFailure + "-" + timeToRepair + "]");
                 
                 if (stat != null) {
                     int currentlyNotDestroyed = stat.getNotDestroyedID(timeToNextFailure, timeToRepair);
@@ -91,25 +97,77 @@ public class Simulation {
                     stat = new ConnectionStat(connectionSymbol);
                     connections.put(connectionSymbol, stat);
                 }
-    
+                
                 int currentlyNotDestroyed = stat.getNotDestroyedID(timeToNextFailure, timeToRepair);
                 stat.addOfflineTime(timeToNextFailure, timeToRepair, currentlyNotDestroyed);
             }
+        }
+    }
+    
+    private void applyStatus() {
+        HashMap<ConnectionStat.Duration, ConnectionSymbol> durMap = new HashMap<>();
+        for (ConnectionSymbol connectionSymbol : connections.keySet()) {
+            ConnectionStat stat = connections.get(connectionSymbol);
+            HashMap<Integer, List<ConnectionStat.Duration>> map = stat.getOfflineMap();
+            if (map == null) continue;
             
-            for (ConnectionSymbol connectionSymbol : connections.keySet()) {
-                ConnectionStat stat = connections.get(connectionSymbol);
-                connectionSymbol.setRedundancy(connectionSymbol.getRedundancy()-stat.getDestroyedCount(timeToNextFailure, timeToRepair));
-            }
+            List<ConnectionStat.Duration> list = map.get(0);
+            if (list == null) continue;
             
-            Set<NetworkSymbol> connectedNetworks = getAllConnectedNodes();
-            List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
-            for (NetworkSymbol network : allNodes) {
-                if (!connectedNetworks.contains(network)) {
-                    // System.out.println("network " + network.getName() + " destroyed: " + timeToNextFailure/(60*60*24) + " " + timeToRepair/(60*60*24));
-                    network.getDestroyedTimes().add(new ConnectionStat.Duration(timeToNextFailure, timeToRepair));
-                }
+            for (ConnectionStat.Duration duration : list) {
+                durMap.put(duration, connectionSymbol);
             }
         }
+        
+        TreeMap<ConnectionStat.Duration, ConnectionSymbol> treeMap = new TreeMap<>(durMap);
+        String type = "start";
+        String prevType;
+        ConnectionSymbol connectionSymbol = null;
+        ConnectionSymbol prevSymbol;
+        
+        ConnectionStat.Duration.Triple<ConnectionStat.Duration, String, ConnectionSymbol> triple = ConnectionStat.Duration.getNextDuration(treeMap, 0);
+        long periodEnd;
+        long periodStart = 0;
+        do {
+            if (triple != null) {
+                prevSymbol = connectionSymbol;
+                connectionSymbol = triple.third;
+                prevType = type;
+                type = triple.value;
+                
+                if (prevType.equals("start") && prevSymbol != null) {
+                    prevSymbol.setRedundancy(0);
+                    periodEnd = triple.key.start;
+                } else if (prevType.equals("end") && prevSymbol != null) {
+                    prevSymbol.setRedundancy(1);
+                    periodEnd = triple.key.end;
+                } else if (prevType.equals("start")) {
+                    periodEnd = triple.key.start;
+                } else {
+                    periodEnd = triple.key.end;
+                }
+                
+                if (periodStart >= periodEnd) continue;
+                System.out.println("STEP: " + type + " " + periodStart + " " + periodEnd);
+                
+                Set<NetworkSymbol> connectedNetworks = getAllConnectedNodes();
+                boolean debug = connectedNetworks.size() != 7;
+                if (debug) System.out.println("Connected Symbol count: " + connectedNetworks.size());
+                
+                List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
+                for (NetworkSymbol network : allNodes) {
+                    if (!connectedNetworks.contains(network)) {
+                        if (debug)
+                            System.out.println("network " + network.getName() + " destroyed: " + periodStart + " " + periodEnd);
+                        // network.getDestroyedTimes().add(new ConnectionStat.Duration(periodStart, periodEnd));
+                        network.setDestroyedTime(Math.abs(periodEnd - periodStart));
+                    }
+                }
+                
+                periodStart = periodEnd;
+                triple = ConnectionStat.Duration.getNextDuration(treeMap, periodEnd);
+            }
+        } while (triple != null);
     }
     
     private void flattenDuration() {
@@ -126,6 +184,7 @@ public class Simulation {
             for (ConnectionStat.Duration duration : network.getDestroyedTimes()) {
                 network.setDestroyedTime(network.getDestroyedTime() + duration.end - duration.start);
             }
+            System.out.println("NETWORK: " + network.getName() + " " + network.getDestroyedTime());
         }
     }
     
@@ -149,7 +208,7 @@ public class Simulation {
         List<NetworkSymbol> allNodes = drawHandler.getAllNetworkSymbols();
         for (NetworkSymbol network : allNodes) {
             for (ConnectionStat.Duration duration : network.getDestroyedTimes()) {
-                result = result + "" +network.getName() + ";" + duration.start + ";" + duration.end + "\n";
+                result = result + "" + network.getName() + ";" + duration.start + ";" + duration.end + "\n";
             }
         }
         return result;
@@ -157,6 +216,7 @@ public class Simulation {
     
     private Set<NetworkSymbol> getAllConnectedNodes() {
         NetworkSymbol symbol = getCurrentlyActiveNetwork();
+        // System.out.println("ACTIVE: " + symbol.getName() +"\n");
         return new HashSet<>(findAllConnectedNetworks(symbol));
     }
     
@@ -196,13 +256,13 @@ public class Simulation {
     private NetworkSymbol getCurrentlyActiveNetwork() {
         List<NetworkSymbol> symbols = drawHandler.getAllImportantNetworkSymbols();
         symbols.sort(Comparator.comparingInt(NetworkSymbol::getPriority));
-        for (int i = 0; i < symbols.size()-1; i++) {
+        for (int i = 0; i < symbols.size() - 1; i++) {
             Set<NetworkSymbol> connectedNetworks = findAllConnectedNetworks(symbols.get(i));
-            if (connectedNetworks.contains(symbols.get(i+1))) {
+            if (connectedNetworks.contains(symbols.get(i + 1))) {
                 return symbols.get(i);
             }
         }
-        return symbols.get(symbols.size()-1);
+        return symbols.get(symbols.size() - 1);
     }
     
 }
