@@ -1,24 +1,26 @@
+import common as cm
 import pandas as pd
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+import matplotlib.pyplot as plt
+
+# Dateinamen festlegen
+sim_directory = 'src/python/'           ### Anpassen
+sim_result_name = 'multi_sim_result1'   ### Anpassen
+file_name = sim_directory + sim_result_name + '.txt'
 
 # Lese die CSV-Datei ein
-dataframe = pd.read_csv('src/python/simulation-results1.csv', delimiter=';')
-
-# Entferne die erste Zeile, die die Simulationsparameter enthält
-#dataframe = dataframe.iloc[1:]
+dataframe = pd.read_csv(file_name, delimiter=cm.COLUMN_DELIMITER, skiprows=1)
 
 # Umrechnung der Verfügbarkeiten in Werte zwischen 0 und 1
-dataframe['available'] = dataframe['available'].str.rstrip('%').astype(float) / 100
+dataframe[cm.AVAILABILITY] = dataframe[cm.AVAILABILITY].str.rstrip('%').astype(float) / 100
 
 # Gruppieren der Daten nach MTBF und MTTR und Berechnung des Produkts der Verfügbarkeiten
-grouped_df = dataframe.groupby(['meandes', 'meanrep'])['available'].prod().reset_index()
+grouped_df = dataframe.groupby([cm.MTBF, cm.MTTR])[cm.AVAILABILITY].prod().reset_index()
 
 # Extrahiere die Daten für den Plot
-x = grouped_df['meandes'].astype(float) / (60*60*24)
-y = grouped_df['meanrep'].astype(float) / (60*60)
-z = grouped_df['available'].apply(lambda z: z if z < 1 else 99.9999/100)
+x = grouped_df[cm.MTBF].astype(float) / (60*60*24)
+y = grouped_df[cm.MTTR].astype(float) / (60*60)
+z = grouped_df[cm.AVAILABILITY].apply(lambda z: z if z < 1 else 99.9999/100)
 z = np.log10(1 - z)
 
 # Erstelle einen 3D-Plot
@@ -41,6 +43,9 @@ ax.invert_zaxis()
 
 # Zeige die Legende
 ax.legend()
+
+fig.set_figwidth(6)
+fig.set_figheight(6)
 
 # Zeige den Plot
 plt.show()

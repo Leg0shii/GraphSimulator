@@ -1,27 +1,29 @@
+import common as cm
 import pandas as pd
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+import matplotlib.pyplot as plt
+
+# Dateinamen festlegen
+sim_directory = 'src/python/'           ### Anpassen
+sim_result_name = 'multi_sim_result1'   ### Anpassen
+file_name = sim_directory + sim_result_name + '.txt'
 
 # Lese die CSV-Datei ein
-dataframe = pd.read_csv('src/python/simulation-results1.csv', delimiter=';')
-
-# Entferne die erste Zeile, die die Simulationsparameter enthält
-#dataframe = dataframe.iloc[1:]
+dataframe = pd.read_csv(file_name, delimiter=cm.COLUMN_DELIMITER, skiprows=1)
 
 # Erstelle einen 3D-Plot
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
 # Durchlaufe alle einzigartigen Knotennamen
-for name in dataframe['name'].unique():
-    subset = dataframe[dataframe['name'] == name]
+for name in dataframe[cm.NODE_NAME].unique():
+    subset = dataframe[dataframe[cm.NODE_NAME] == name]
     
     # Extrahiere die Daten für den Plot
-    x = subset['meandes'].astype(float) / (60*60*24)
-    y = subset['meanrep'].astype(float) / (60*60)
+    x = subset[cm.MTBF].astype(float) / (60*60*24)
+    y = subset[cm.MTTR].astype(float) / (60*60)
 
-    z = subset['available'].str.rstrip('%').astype(float)
+    z = subset[cm.AVAILABILITY].str.rstrip('%').astype(float)
     z = z.apply(lambda z: z if z < 100 else 99.9999) / 100
     z = np.log10(1 - z)
     
@@ -42,6 +44,9 @@ ax.invert_zaxis()
 
 # Zeige die Legende
 ax.legend()
+
+fig.set_figwidth(6)
+fig.set_figheight(6)
 
 # Zeige den Plot
 plt.show()

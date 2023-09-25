@@ -1,8 +1,8 @@
 # column names
 NODE_NAME       = 'name'
-MEAN_TBF        = 'meandes'
+MTBF        = 'meandes'
 STD_DEV_TBF     = 'stddes'
-MEAN_TTR        = 'meanrep'
+MTTR        = 'meanrep'
 STD_DEV_TTR     = 'stdrep'
 AVAILABILITY    = 'available'
 
