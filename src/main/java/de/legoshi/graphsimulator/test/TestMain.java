@@ -23,7 +23,7 @@ public class TestMain {
         public void start(Stage stage) {
             // TEST: Here
 
-            // printDistribution();
+            printDistribution();
             // showExamplePlot();
         }
     }
@@ -34,7 +34,7 @@ public class TestMain {
 
     public static void printDistribution() {
         HashMap<Integer, Integer> map = new HashMap<>();
-        Distribution distribution = new Distribution(10, 1);
+        Distribution distribution = new Distribution(3600, 45.944);
         for (int i = 0; i < 100000; i++) {
             int randValue = (int) Math.round(distribution.getRandomValue());
             map.put(randValue, map.getOrDefault(randValue, 0)+1);

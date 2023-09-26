@@ -2,6 +2,7 @@ package de.legoshi.graphsimulator.gui.draw.symbol;
 
 import de.legoshi.graphsimulator.gui.draw.DrawHandler;
 import de.legoshi.graphsimulator.gui.draw.edit.NetworkEditWindow;
+import de.legoshi.graphsimulator.simulation.ConnectionStat;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -25,7 +26,9 @@ public class NetworkSymbol extends Symbol {
     @Getter private String name;
     @Getter private final List<ConnectionSymbol> connectionSymbols = new ArrayList<>();
     @Getter private boolean important = false;
+    @Getter @Setter private int priority = 99;
     @Getter @Setter private long destroyedTime = 0;
+    @Getter @Setter private List<ConnectionStat.Duration> destroyedTimes = new ArrayList<>();
     
     public double lastX;
     public double lastY;
@@ -44,9 +47,10 @@ public class NetworkSymbol extends Symbol {
         this.lastY = Double.MAX_VALUE;
     }
     
-    protected NetworkSymbol(DrawHandler drawHandler, String uuid, String name, boolean important, double posX, double posY) {
+    protected NetworkSymbol(DrawHandler drawHandler, String uuid, String name, boolean important, int prio, double posX, double posY) {
         this.uuid = UUID.fromString(uuid);
         this.name = name;
+        this.priority = prio;
         this.important = important;
         setImportant(important);
         
@@ -122,7 +126,7 @@ public class NetworkSymbol extends Symbol {
     // uuid;name;important;posX;posY
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ";" + uuid + ";" + name + ";" + important + ";" + this.getTranslateX() + ";" + this.getTranslateY();
+        return getClass().getSimpleName() + ";" + uuid + ";" + name + ";" + important + ";" + this.getTranslateX() + ";" + this.getTranslateY() + ";" + priority;
     }
     
     public static NetworkSymbol toSymbol(DrawHandler drawHandler, String value) {
@@ -132,8 +136,12 @@ public class NetworkSymbol extends Symbol {
         boolean important = Boolean.parseBoolean(args[3]);
         double posX = Double.parseDouble(args[4]);
         double posY = Double.parseDouble(args[5]);
+        int prio = 99;
+        try {
+            prio = Integer.parseInt(args[6]);
+        } catch (Exception ignored) {}
     
-        return new NetworkSymbol(drawHandler, uuid, name, important, posX, posY);
+        return new NetworkSymbol(drawHandler, uuid, name, important, prio, posX, posY);
     }
     
     @Override

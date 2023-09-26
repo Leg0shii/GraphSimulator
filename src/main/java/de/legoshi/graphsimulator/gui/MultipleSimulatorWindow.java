@@ -56,17 +56,23 @@ public class MultipleSimulatorWindow extends DialogWindow {
         this.gridPane.add(new Label("Zeitdauer:"), 0, 0);
         this.gridPane.add(duration, 1, 0);
         
-        this.gridPane.add(new Label("Ø Verbindungsausfall:"), 0, 1);
-        this.gridPane.add(meanDestructionStart, 1, 1);
-        this.gridPane.add(meanDestructionEnd, 2, 1);
-        this.gridPane.add(meanDestructionStepCount, 3, 1);
-        this.gridPane.add(meanDestructionPercentOverlap, 4, 1);
+        // Ø Verbindungsausfall
+        this.gridPane.add(new Label("Ausfall:"), 0, 2);
+        this.gridPane.add(new Label("Ø Start"), 1, 1);
+        this.gridPane.add(meanDestructionStart, 1, 2);
+        this.gridPane.add(new Label("Ø Ende"), 2, 1);
+        this.gridPane.add(meanDestructionEnd, 2, 2);
+        this.gridPane.add(new Label("Ø Schritt"), 3, 1);
+        this.gridPane.add(meanDestructionStepCount, 3, 2);
+        this.gridPane.add(new Label("Überlappung"), 4, 1);
+        this.gridPane.add(meanDestructionPercentOverlap, 4, 2);
         
-        this.gridPane.add(new Label("Ø Reperatur:"), 0, 2);
-        this.gridPane.add(meanRepairStart, 1, 2);
-        this.gridPane.add(meanRepairEnd, 2, 2);
-        this.gridPane.add(meanRepairStepCount, 3, 2);
-        this.gridPane.add(meanRepairPercentOverlap, 4, 2);
+        // Ø Reperatur
+        this.gridPane.add(new Label("Reparatur:"), 0, 3);
+        this.gridPane.add(meanRepairStart, 1, 3);
+        this.gridPane.add(meanRepairEnd, 2, 3);
+        this.gridPane.add(meanRepairStepCount, 3, 3);
+        this.gridPane.add(meanRepairPercentOverlap, 4, 3);
         
         this.gridPane.add(startGenerateButton, 0, 5, 1, 4);
     }

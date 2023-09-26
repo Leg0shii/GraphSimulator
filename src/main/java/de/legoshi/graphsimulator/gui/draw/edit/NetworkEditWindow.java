@@ -11,6 +11,7 @@ public class NetworkEditWindow extends DialogWindow {
 
     private final NetworkSymbol symbol;
     private final TextField textField;
+    private final TextField prioText;
     
     private final Button acceptButton;
     private final Button deleteButton;
@@ -21,7 +22,10 @@ public class NetworkEditWindow extends DialogWindow {
         super();
         this.symbol = symbol;
         this.textField = new TextField(symbol.getName());
+        this.prioText = new TextField(symbol.getPriority() + "");
+        
         this.importantSelector = new CheckBox();
+        this.importantSelector.setSelected(symbol.isImportant());
         this.acceptButton = new Button("OK");
         this.deleteButton = new Button("Delete");
         
@@ -29,9 +33,11 @@ public class NetworkEditWindow extends DialogWindow {
         this.gridPane.add(textField, 1, 0);
         this.gridPane.add(new Label("Important: "), 0, 1);
         this.gridPane.add(importantSelector, 1, 1);
+        this.gridPane.add(new Label("Priority: "), 0, 2);
+        this.gridPane.add(prioText, 1, 2);
     
-        this.gridPane.add(acceptButton, 0, 2);
-        this.gridPane.add(deleteButton, 1, 2);
+        this.gridPane.add(acceptButton, 0, 3);
+        this.gridPane.add(deleteButton, 1, 3);
         
         registerInteract();
     }
@@ -39,6 +45,7 @@ public class NetworkEditWindow extends DialogWindow {
     public void registerInteract() {
         this.acceptButton.setOnAction(event -> {
             symbol.setName(textField.getText());
+            symbol.setPriority(Integer.parseInt(prioText.getText()));
             this.close();
         });
         this.deleteButton.setOnAction(event -> {

@@ -1,5 +1,6 @@
 package de.legoshi.graphsimulator.gui;
 
+import de.legoshi.graphsimulator.file.FileSaver;
 import de.legoshi.graphsimulator.gui.draw.DrawHandler;
 import de.legoshi.graphsimulator.plot.Distribution;
 import de.legoshi.graphsimulator.simulation.Simulation;
@@ -63,9 +64,15 @@ public class SimulationWindow extends DialogWindow {
         gridPane.add(startGenerateButton, 1, 7);
     }
     
+    // header;duration;meandes;stddes;meanrep;stdrep;rangestart;rangeend
     @Override
     public void registerInteract() {
         startGenerateButton.setOnAction(e -> {
+            String resultString = "configuration;" + duration.getText() + ";";
+            resultString += meanConnectionsField.getText() + ";" + stdDevConnectionsField.getText() + ";" + meanRepairField.getText() + ";" + stdDevRepairField.getText();
+            resultString += ";" + rangeStart.getText() + ";" + rangeEnd.getText()+ "\n";
+            resultString += "name;desstart;desend\n";
+            
             Simulation simulation = new Simulation(
                 drawHandler,
                 new Distribution(TimeParser.parseToSeconds(meanConnectionsField.getText()), TimeParser.parseToSeconds(stdDevConnectionsField.getText())),
@@ -75,7 +82,8 @@ public class SimulationWindow extends DialogWindow {
                 Integer.parseInt(rangeEnd.getText())
             );
             
-            simulation.start();
+            resultString = resultString + simulation.startSingle();
+            new FileSaver(drawHandler, resultString);
         });
     }
 }
