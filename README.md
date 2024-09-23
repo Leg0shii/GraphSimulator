@@ -7,12 +7,12 @@ This tool helps you test and understand your network's reliability. You can simu
 ### 1. **Create Nodes and Connections**
 Place network nodes and set connections between them. You can define the redundancy level (n), which shows how many alternative paths are available if a connection fails.
 
-![grafik](https://github.com/user-attachments/assets/6a011be2-d97a-467d-bb39-4df70aa95d6b)
+<img src="https://github.com/user-attachments/assets/6a011be2-d97a-467d-bb39-4df70aa95d6b" width="400"/>
 
 ### 2. **Define Main Nodes**
 Choose which nodes are critical (main nodes). These nodes always need to have a connection, no matter what happens to the rest of the network.
 
-![grafik](https://github.com/user-attachments/assets/0e48a097-2deb-4ba2-9485-f8106127e576)
+<img src="https://github.com/user-attachments/assets/0e48a097-2deb-4ba2-9485-f8106127e576" width="400"/>
 
 ### 3. **Configure Simulation Parameters**
 Adjust settings like:
@@ -23,7 +23,7 @@ Adjust settings like:
    - **Standard Deviation of Fix Time**: Variability in repair times.
    - **Randomized Attack Count**: Simulate random attacks that reduce network redundancy.
 
-![grafik](https://github.com/user-attachments/assets/15151148-a356-4831-ba0a-61d070f3190b)
+<img src="https://github.com/user-attachments/assets/15151148-a356-4831-ba0a-61d070f3190b" width="400"/>
 
 
 ### 4. **Track Network Failures**
@@ -35,8 +35,8 @@ Save your network setups and load them later. This way, you can easily test diff
 ### 6. **Run Multiple Simulations**
 Simulate different scenarios by setting a range and step size for parameters like failure rate and fix time. This helps you see how changes affect network stability.
 
-<img src="https://github.com/user-attachments/assets/ee86eb46-8465-4c00-8c23-31ae55f88a0f" width="300" height="425"/>
-<img src="https://github.com/user-attachments/assets/c9d01b67-5547-4f87-8d14-13488947abdd" width="400" height="225"/>
+<img src="https://github.com/user-attachments/assets/ee86eb46-8465-4c00-8c23-31ae55f88a0f" width="400"/>
+<img src="https://github.com/user-attachments/assets/c9d01b67-5547-4f87-8d14-13488947abdd" width="400"/>
 
 ### 7. **Estimate Required Redundancy**
 Find out how much redundancy you need to maintain a stable network with a specific reliability level (like 99.9%).
